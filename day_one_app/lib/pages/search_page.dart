@@ -1,4 +1,3 @@
-// lib/search_screen.dart
 import 'package:flutter/material.dart';
 
 class SearchScreen extends StatelessWidget {
@@ -48,6 +47,12 @@ class SearchScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen width
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Determine crossAxisCount based on screen width
+    final crossAxisCount = screenWidth < 600 ? 2 : 4;
+
     return Scaffold(
       appBar: AppBar(
         //title: Text(title),
@@ -61,33 +66,38 @@ class SearchScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4, // Number of columns in the grid
-            crossAxisSpacing: 32.0, // Space between columns
-            mainAxisSpacing: 40.0, // Space between rows
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount, // Dynamic crossAxisCount
+            crossAxisSpacing: 16.0, // Space between columns
+            mainAxisSpacing: 16.0, // Space between rows
+            childAspectRatio: 0.8, // Adjust the aspect ratio for better fit
           ),
           itemCount: 10, // Number of cards to display
           itemBuilder: (context, index) {
             return Card(
               elevation: 5, // Shadow effect for the card
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      SizedBox(
-                        width: 80,
-                        height: 80,
-                        child: Image.asset('lib/images/R.jpg'),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Expanded(
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: Image.asset(
+                          'lib/images/R.jpg',
+                          fit: BoxFit
+                              .contain, // Scale the image to fit within the bounds
+                        ),
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Card ${index + 1}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Card ${index + 1}',
+                      style: const TextStyle(fontSize: 14),
+                      overflow: TextOverflow.ellipsis, // Prevent text overflow
+                    ),
+                  ],
                 ),
               ),
             );

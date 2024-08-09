@@ -29,16 +29,20 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         mainAxisAlignment:
             MainAxisAlignment.center, // Center content horizontally
         children: [
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white),
+          Flexible(
+            child: Text(
+              title,
+              style: const TextStyle(color: Colors.white),
+              overflow: TextOverflow.ellipsis, // Prevent overflow
+            ),
           ),
           if (selectedDate != null)
             Padding(
-              padding: const EdgeInsets.only(left: 100.0),
+              padding: const EdgeInsets.only(
+                  left: 8.0), // Reduced padding for better fit
               child: Container(
-                height: 30,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 decoration: BoxDecoration(
                   color: Colors.amber[300],
                   borderRadius: BorderRadius.circular(8.0),
@@ -46,7 +50,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: Center(
                   child: Text(
                     '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}',
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    overflow: TextOverflow.ellipsis, // Prevent overflow
                   ),
                 ),
               ),
