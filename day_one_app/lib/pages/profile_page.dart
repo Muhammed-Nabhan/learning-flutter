@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -9,6 +11,20 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   bool _isExpanded = false;
+  String? imagePath;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImagePath();
+  }
+
+  Future<void> _loadImagePath() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      imagePath = prefs.getString('imagePath');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +65,7 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-            // Positioned animated container
+            // Positioned animated container with image
             AnimatedPositioned(
               duration: const Duration(seconds: 1),
               curve: Curves.easeInOut,
@@ -70,7 +86,21 @@ class ProfilePageState extends State<ProfilePage> {
                 decoration: BoxDecoration(
                   color: Colors.blue,
                   borderRadius: BorderRadius.circular(300),
+                  image: imagePath != null
+                      ? DecorationImage(
+                          image: FileImage(File(imagePath!)),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
                 ),
+                child: imagePath == null
+                    ? Center(
+                        child: Text(
+                          'No Image',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      )
+                    : null,
               ),
             ),
           ],

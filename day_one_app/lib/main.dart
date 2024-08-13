@@ -1,6 +1,8 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
+import 'pages/camera_page.dart';
 import 'pages/explore_page.dart';
+import 'pages/file_page.dart';
 import 'pages/home_page.dart';
 import 'pages/reminder_page.dart';
 import 'pages/search_page.dart';
@@ -8,9 +10,17 @@ import 'components/custom_appbar.dart';
 import 'pages/notification_page.dart';
 import 'pages/profile_page.dart';
 import 'pages/cart_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'state/counter.dart'; // Import the Counter class
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => Counter(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -48,6 +58,21 @@ class HomeState extends State<Home> {
     'Search',
     'Notifications',
   ];
+  @override
+  void initState() {
+    super.initState();
+    _loadSelectedDate();
+  }
+
+  Future<void> _loadSelectedDate() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? dateString = prefs.getString('selectedDate');
+    if (dateString != null) {
+      setState(() {
+        _selectedDate = DateTime.parse(dateString);
+      });
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -56,7 +81,7 @@ class HomeState extends State<Home> {
   }
 
   Future<void> _navigateToPage(String page) async {
-    final DateTime? result = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) {
@@ -69,18 +94,18 @@ class HomeState extends State<Home> {
               return const ReminderPage();
             case 'Explore':
               return const ExplorePage();
+            case 'Camera':
+              return const CameraPage();
+            case 'File':
+              return const FilePage();
             default:
               return const Home();
           }
         },
       ),
     );
-
-    if (result != null) {
-      setState(() {
-        _selectedDate = result;
-      });
-    }
+    // Reload the selected date after returning from the ReminderPage
+    _loadSelectedDate();
   }
 
   @override
@@ -136,6 +161,20 @@ class HomeState extends State<Home> {
               onTap: () {
                 Navigator.pop(context);
                 _navigateToPage('Explore');
+              },
+            ),
+            ListTile(
+              title: const Text('Camera'),
+              onTap: () {
+                Navigator.pop(context);
+                _navigateToPage('Camera');
+              },
+            ),
+            ListTile(
+              title: const Text('Files'),
+              onTap: () {
+                Navigator.pop(context);
+                _navigateToPage('File');
               },
             ),
           ],

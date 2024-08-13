@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReminderPage extends StatefulWidget {
   const ReminderPage({super.key});
@@ -27,9 +28,12 @@ class ReminderPageState extends State<ReminderPage> {
     }
   }
 
-  void _setReminder() {
+  Future<void> _setReminder() async {
     if (_selectedDate != null) {
-      Navigator.pop(context, _selectedDate); // Return the selected date
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      // Save the selected date as a string in the format "yyyy-MM-dd"
+      await prefs.setString('selectedDate', _selectedDate!.toIso8601String());
+      Navigator.pop(context); // Just close the screen
     }
   }
 
